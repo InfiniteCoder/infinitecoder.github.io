@@ -1,0 +1,146 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>Aditya Patil&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="Aditya Patil" />
+  <meta name="generator" content="Hugo 0.46" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://infinitecoder.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://infinitecoder.github.io/">Aditya Patil&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+         
+        <li><a href="https://www.linkedin.com/in/aditya-patil"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+         
+        <li><a href="https://github.com/infinitecoder"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>CS, Linux and Programming</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>How to authorize using OAuth 2.0 in Postman</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2017-12-22T00:00:00Z">Dec 22, 2017</time>
+        </li>
+        
+        
+
+        
+
+        <li>2 min read</li>
+    </ul>
+</aside>
+    
+
+    
+
+<p>If you develop APIs, you surely must have heard of <a href="https://www.getpostman.com/">Postman</a>. It is a tool that is used to test API endpoints.<br />
+When authorizing, for APIs protected with Basic Auth, you can simply add the username and password as a parameter to an HTTP call. But when using an external OAuth provider such as Google, one can&rsquo;t simply put the login link and authorize.<br />
+This post will explain how you can authorize for an API using an OAuth 2.0 provider (such as Google) in Postman.</p>
+
+<h2 id="authorization">Authorization</h2>
+
+<p>Initially, go to <strong>Authorization</strong> and in the <strong>type</strong> option, select <strong>OAuth 2.0</strong>. In the right part of the window, you shall see the <em>access token</em> section, which lists the current access token being used (which would be empty for now). Click on the <strong>get new access token</strong> button.
+<img src="https://infinitecoder.github.io/img/Postman-main-window.png" alt="postman main window" /></p>
+
+<p>You shall see the access token window, where you have to add details such as client id and client secret. You can get these from your OAuth provider. Insert the relevant details and click <strong>request token</strong>.
+<img src="https://infinitecoder.github.io/img/postman-token-window.png" alt="postman access token window" /></p>
+
+<p>Now, postman launches another window, which is basically a lightweight browser, which will open the login page of your OAuth 2.0 provider. After you <strong>login</strong>, Postman will retrieve the access token, and display the details to you.</p>
+
+<p>You can notice that the access token is now shown in the right part of the postman window.
+<img src="https://infinitecoder.github.io/img/access-token-added.png" alt="access token added" /></p>
+
+<p>That&rsquo;s all, now you can use this token for other requests to your API endpoints.</p>
+
+<h2 id="refreshing-tokens">Refreshing tokens</h2>
+
+<p>To refresh the token, click on <strong>get new access token</strong>. It will show the access token window, where the details should be already added. Simply click on the <strong>request token</strong> button, and the access token shall be refreshed.</p>
+
+<h2 id="log-in-as-different-user">Log in as different user</h2>
+
+<p>Postman stores the cookies🍪 even after you close and relaunch it, so you will still be logged in as the same user on every session. If you want to log in as a different user, you need to delete the cookies. To do this, click on the cookies🍪 link in the upper right part of the window, and delete all cookies from your OAuth provider.<br />
+<img src="https://infinitecoder.github.io/img/postman-manage-cookies.png" alt="postman cookies window" />
+Now repeat the previous process to get the token. This time, Postman shall show you the login page again.</p>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2017-12-12-google-researchers-find-that-machine-learning-could-be-better-for-indexing/"><i class="fa fa-chevron-circle-left"></i> Google researchers find that Machine Learning could be better for Indexing</a>
+        </li>
+        
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2017-12-24-how-to-use-google-oauth-2-0-in-spring-boot-2-0/">How to use Google OAuth 2.0 in Spring Boot 2.0 <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - Aditya Patil | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://infinitecoder.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://infinitecoder.github.io/js/scripts.js"></script>
+</body>
+
+</html>

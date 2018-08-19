@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aditya Patil&#39;s Blog</title>
+    <link>https://infinitecoder.github.io/</link>
+    <description>Recent content on Aditya Patil&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright &amp;copy; 2018 - Aditya Patil</copyright>
+    <lastBuildDate>Sun, 19 Aug 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://infinitecoder.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About</title>
+      <link>https://infinitecoder.github.io/about/</link>
+      <pubDate>Sun, 19 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/about/</guid>
+      <description>I am Aditya Patil, a ME Computer Science student at BITS Pilani, Hyderabad Campus. I completed my BE Computer Science and Engineering degree from Shivaji University, Kolhapur.
+Check out my projects on GitHub.</description>
+    </item>
+    
+    <item>
+      <title>Finding short, good domain names using AWS API ( Free of Cost )</title>
+      <link>https://infinitecoder.github.io/posts/2018-05-28-finding-domains/</link>
+      <pubDate>Mon, 28 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/2018-05-28-finding-domains/</guid>
+      <description>Recently, I was on a lookout for a domain name for personal use. This domain name will probably never be seen by more than 2 eyes, so I didn&amp;rsquo;t care exactly what TLD it has, or even what it&amp;rsquo;s FQDN is.</description>
+    </item>
+    
+    <item>
+      <title>Building GCC docker image</title>
+      <link>https://infinitecoder.github.io/posts/2018-03-29-building-gcc-docker-image/</link>
+      <pubDate>Thu, 29 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/2018-03-29-building-gcc-docker-image/</guid>
+      <description>When you look at the various official images for docker, you&amp;rsquo;ll notice that they are built with stability in mind more than anything. This can be noted by the fact that they use Debian as their base, instead of the much lighter Alpine Linux.</description>
+    </item>
+    
+    <item>
+      <title>Finding popular sites from data breach list</title>
+      <link>https://infinitecoder.github.io/posts/2018-02-28-finding-popular-sites/</link>
+      <pubDate>Wed, 28 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/2018-02-28-finding-popular-sites/</guid>
+      <description>Recently, Troy Hunt added a new dataset of 2844 data breaches with 80M records to his &amp;ldquo;Have I been pwned&amp;rdquo; database. Along with this, Troy also provided a list of the names of the files containing this data.</description>
+    </item>
+    
+    <item>
+      <title>How to use Google OAuth 2.0 in Spring Boot 2.0</title>
+      <link>https://infinitecoder.github.io/posts/2017-12-24-how-to-use-google-oauth-2-0-in-spring-boot-2-0/</link>
+      <pubDate>Sun, 24 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/2017-12-24-how-to-use-google-oauth-2-0-in-spring-boot-2-0/</guid>
+      <description>While I have used Google here, the process is pretty much same for Facebook, Github and Okta.
+ Spring Boot 2.0 is coming soon, and the first Release Candidate is already out.</description>
+    </item>
+    
+    <item>
+      <title>How to authorize using OAuth 2.0 in Postman</title>
+      <link>https://infinitecoder.github.io/posts/2017-12-22-how-to-authorize-using-oauth-2-0-in-postman/</link>
+      <pubDate>Fri, 22 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/2017-12-22-how-to-authorize-using-oauth-2-0-in-postman/</guid>
+      <description>If you develop APIs, you surely must have heard of Postman. It is a tool that is used to test API endpoints.
+When authorizing, for APIs protected with Basic Auth, you can simply add the username and password as a parameter to an HTTP call.</description>
+    </item>
+    
+    <item>
+      <title>Google researchers find that Machine Learning could be better for Indexing</title>
+      <link>https://infinitecoder.github.io/posts/2017-12-12-google-researchers-find-that-machine-learning-could-be-better-for-indexing/</link>
+      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/2017-12-12-google-researchers-find-that-machine-learning-could-be-better-for-indexing/</guid>
+      <description>Current Techniques Currently, we use techniques such as B Tree index to index data for fast searching. This is very important for various applications, mainly databases. Data warehouses can contain Petabytes or even Exabytes of data, and indexing them efficiently, both in terms of time and space, is very crucial.</description>
+    </item>
+    
+    <item>
+      <title>Fixing rtl8723be Wifi and Bluetooth issues in Linux</title>
+      <link>https://infinitecoder.github.io/posts/2017-12-09-rtl8723be-fix/</link>
+      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/2017-12-09-rtl8723be-fix/</guid>
+      <description>The problems rtl8723be is an Wifi + Bluetooth card provided by Realtek. As goes with many devices, the support for this device in Linux has not been very good. On many devices, either or both of WiFi and Bluetooth don&amp;rsquo;t work properly, or in the worst case, don&amp;rsquo;t work at all.</description>
+    </item>
+    
+  </channel>
+</rss>

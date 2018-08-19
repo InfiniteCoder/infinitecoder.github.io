@@ -1,0 +1,279 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>Aditya Patil&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="Aditya Patil" />
+  <meta name="generator" content="Hugo 0.46" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://infinitecoder.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://infinitecoder.github.io/">Aditya Patil&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+         
+        <li><a href="https://www.linkedin.com/in/aditya-patil"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+         
+        <li><a href="https://github.com/infinitecoder"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>CS, Linux and Programming</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Building GCC docker image</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-03-29T00:00:00Z">Mar 29, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>6 min read</li>
+    </ul>
+</aside>
+    
+
+    
+
+<p>When you look at the various official images for docker, you&rsquo;ll notice that they are built with stability in mind more than anything. This can be noted by the fact that they use Debian as their base, instead of the much lighter Alpine Linux. Using Debian provides a rock solid base for whatever you build upon it. However, this comes at the cost of size. Official docker images can be humongous compared to their community built alternatives.</p>
+
+<p>I needed a GCC 7.3 image for my project. The official image for GCC stands at a compressed size of 526MB, while when uncompressed, it&rsquo;s size reaches 1.6GB. So I decided to build my own GCC image, using Alpine Linux as a base.</p>
+
+<h2 id="basics-of-building-gcc">Basics of building GCC</h2>
+
+<p>The process to build and install GCC might look straighforward at first. All you have to do is install dependencies, download and extract the source code and then execute following commands</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">./configure
+make bootstrap
+make install</code></pre></div>
+<p>However, a multitude of configuration options, along with requirement of many dependencies and platform specific requirements can make this process somewhat complicated.</p>
+
+<h2 id="why-use-docker">Why use Docker?</h2>
+
+<p>Docker is an easy way to get a clean slate everytime you want to try something different. As I was trying out various configuration options, and installing and removing various packages, using docker meant I could easily figure out what needs to be done, and what needs not be done.
+Also, the Dockerfile thus created can easily be shared with others, so that others could build GCC easily with minor changes made as required.</p>
+
+<h2 id="configuring-gcc">Configuring GCC</h2>
+
+<p>There are a few things that you should note when building GCC,</p>
+
+<ol>
+<li><p><strong>Native build or cross compilation?</strong><br />
+GCC allows you to build a compiler either for the native system, or some other system. You can build a cross compiler by specifying the <code>--target</code> option. Which one you choose would depend upon many factors such as,</p>
+
+<ol>
+<li><strong>Is the target powerful enough to build GCC?</strong><br />
+For less powerful target systems such as embedded system, it might be best, or even necessary to build the compiler on another more powerful system. Due to RAM restrictions, many embedded systems won&rsquo;t even be able to build GCC.</li>
+<li><strong>Does the target already have g++?</strong><br />
+Some systems might not provide the GCC compiler package. Some systems like NAS Servers won&rsquo;t even have a package manager/repositories. For such systems, building a cross compiler is the only option.</li>
+<li><strong>Glibc vs Musl</strong><br />
+If you are using musl instead of glibc, then you must use cross compiler as that is the only way to tell GCC to use musl instead of glibc.</li>
+</ol></li>
+
+<li><p><strong>Multilib or not?</strong><br />
+Multilib allows 64bit systems to produce binaries for 32 bit systems. If you want to enable this, make sure you have the 32 bit libs for target system installed as well. Otherwise, disable it with <code>--disable-multilib</code>.</p></li>
+
+<li><p><strong>Languages</strong><br />
+You would want to specify only those languages that you use. You can do this using the <code>--enable-languages</code> option. I selected <code>C</code> and <code>C++</code> languages.</p></li>
+</ol>
+
+<blockquote>
+<p><strong>Parts of C compiler are written in C++, so C and C++ are the minimal set of languages you can use.</strong></p>
+</blockquote>
+
+<h2 id="building-gcc">Building GCC</h2>
+
+<p>Once done with the configuration, you can build GCC. You can use</p>
+
+<pre><code>make bootstrap
+</code></pre>
+
+<p>if you want to use the recommended way of building GCC 3 times. To improve it&rsquo;s performance more, I choosed</p>
+
+<pre><code>make profiledbootstrap
+</code></pre>
+
+<p>which profiles the compiler at each stage of the build.
+You can also provide optimisation level and debugging information level, using <code>BOOT_CFLAGS</code> as such</p>
+
+<pre><code>BOOT_CFLAGS='-O3 -g0'
+</code></pre>
+
+<p>You can use multiple threads using <code>-j</code> option of make.</p>
+
+<blockquote>
+<p><strong>Use <code>nproc --all</code> to get number of processors, and pass that value to <code>-j</code>. Ideal value lies between X and 2X of processors.</strong></p>
+</blockquote>
+
+<p>The make command I used looks like</p>
+
+<pre><code>make -j$(($(nproc --all) * 2))  BOOT_CFLAGS='-O3 -g0' profiledbootstrap
+</code></pre>
+
+<h2 id="gotchas-when-building">Gotchas when Building</h2>
+
+<ol>
+<li>If you get errors during building, make sure you are using single thread, as using <strong>multiple threads will entangle the logs</strong> of different threads.</li>
+<li>When checking the logs, make sure you <strong>check the logs from correct directory</strong>. The log in root directory might not be the correct one.</li>
+<li>Also <strong>check the logs from bottom up</strong>, trying to find the last error that occurred. Many errors would have occurred while GCC tried different options, and the last one is generally the one you would be interested in.</li>
+
+<li><p>Check available disk space with</p>
+
+<pre><code>df
+</code></pre>
+
+<p>which should give output like below</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ df
+Filesystem     1K-blocks    Used Available Use% Mounted on
+udev             <span style="color:#ae81ff">3928264</span>       <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">3928264</span>   <span style="color:#ae81ff">0</span>% /dev
+tmpfs             <span style="color:#ae81ff">787252</span>   <span style="color:#ae81ff">82480</span>    <span style="color:#ae81ff">704772</span>  <span style="color:#ae81ff">11</span>% /run
+/dev/nvme0n1p1  <span style="color:#ae81ff">20263528</span> <span style="color:#ae81ff">6897228</span>  <span style="color:#ae81ff">13349916</span>  <span style="color:#ae81ff">35</span>% /
+tmpfs            <span style="color:#ae81ff">3936248</span>       <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">3936248</span>   <span style="color:#ae81ff">0</span>% /dev/shm
+tmpfs               <span style="color:#ae81ff">5120</span>       <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">5120</span>   <span style="color:#ae81ff">0</span>% /run/lock
+tmpfs            <span style="color:#ae81ff">3936248</span>       <span style="color:#ae81ff">0</span>   <span style="color:#ae81ff">3936248</span>   <span style="color:#ae81ff">0</span>% /sys/fs/cgroup
+tmpfs             <span style="color:#ae81ff">787252</span>       <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">787252</span>   <span style="color:#ae81ff">0</span>% /run/user/1000</code></pre></div>
+<p>If you are running out of space, remove unused docker containers and images with the commands</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">   docker container prune
+   docker image prune</code></pre></div>
+<p>An example output could look like,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker image prune
+WARNING! This will remove all dangling images.
+Are you sure you want to <span style="color:#66d9ef">continue</span>? <span style="color:#f92672">[</span>y/N<span style="color:#f92672">]</span> y
+Deleted Images:
+deleted: sha256:9a2d252b9015272eb8ee3b44c90eb13132ef95127ae2cf1738f3770b0a1e3491
+deleted: sha256:22c2a75428d929c989b97181076330ff055724e5213ad46409fd1d09e6e1eb5c
+deleted: sha256:e8e34282a265c989d0a7e0678babe37e0a25c061bea8a61d62bbaad85b8d1fe0
+deleted: sha256:a9a515f086bbb042f2f0af0558ebbd54d4274af89054a47fb744b89a3ff9abf1
+deleted: sha256:77f717e737025fa4b595064dd3214ee726f1d21f113067b6be4a8ee772fd80bd
+deleted: sha256:953a9b3a694a2b2c2e97f0d8e17d8209049d17455427e54bd074f60a043cfe71
+deleted: sha256:59d0199fa53ea985c25dc0108e688c08fe4339cb4727949f940cda7085a48d7a
+deleted: sha256:380fb7cf74eea115cc527e2f3f87a50b8b33ad579355e0fdea21439b8a98b677
+deleted: sha256:6cf15d487d230e57ef9ea51b3a26d772a0390f2d397a2dccccb95eaf3fc356db
+deleted: sha256:b7d698cae9bd949d8f206dcf972db24547d877fd2ace30b6bc22f9e3337973d1
+deleted: sha256:51b68531cfb4762bc16a56437c2057df9efef9cf410fcffa713b6378875238fa
+deleted: sha256:f6675c88247cf68ea48d93233fefb9d168df46e515536e6d3ae0b7547708721c
+deleted: sha256:3ba3b9e70e7110bb0d5d946e371154c4ad24d91b289ac484282cce51ddcd4904
+deleted: sha256:8c12bbc7fd1e444f61a7feabbd698f9a784dc5df79bcdfe5d958aeaefd5beffa
+deleted: sha256:68facfd6610c8c7e66f7eb913aa799b067560c732a3b92e6195d003bf225a569
+deleted: sha256:86571571e5b340f201236b81f024a8366796619c5b5a3047309219c6980d7e3a
+deleted: sha256:c3b95b846470d4c412b1e14a7c7f64b3ddff0a973ddc4d605d51fcd6eb356884
+deleted: sha256:ee87d8dcfbcfbc487b31b9566cc1baa4c89ce3977a6b48eed87df102c4201af7
+deleted: sha256:53adecc4e5d9ced48b4af060c6eabc7886084429e2a1e7c18cdc322a5a5b2062
+deleted: sha256:17f9763c498717d25560313cef8b380a9779bb123e2183bda26cdcbacc25339d
+deleted: sha256:4796ae729edd6d1d4e2f59263281d1b880b001d1b0288a198d5ff9f726761cf5
+
+Total reclaimed space: <span style="color:#ae81ff">4</span>.89GB</code></pre></div></li>
+</ol>
+
+<h2 id="build-system">Build System</h2>
+
+<p>The system you use to build will make a lot of difference on the time requried to build GCC. The AWS&rsquo;s <code>m5.large</code> system with <code>2vCore and 8GB RAM</code> system takes 4+ hours, while the much more powerful <code>c5.18xlarge</code> with <code>72vCore and 144GB RAM</code> takes only 15 minutes. However while the m5.large gets maxed out, the c5.18xlarge uses it&rsquo;s full power only occasionally. This is probably the reason why the speedup is not linear in this case.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>You can install GCC with all it&rsquo;s meta information(eg: debugging symbols) with</p>
+
+<pre><code>make install
+</code></pre>
+
+<p>or install a stripped version with</p>
+
+<pre><code>make install-strip
+</code></pre>
+
+<p>By default, the files are stored in /usr/local. If you were building a cross compiler, copy files from this directory into appropriate location.</p>
+
+<h2 id="the-dockerfile">The Dockerfile</h2>
+
+<p>While you could run the previous commands manually into a interactive session of Alpine Linux as follows,</p>
+
+<pre><code>docker run -it alpine:3.7
+</code></pre>
+
+<p>Writing a Dockerfile will allow you to easily build and share your image.</p>
+
+<p>Previously, dockerfile contained linux trickery like using &amp;&amp; to put all commands in a sinle <code>RUN</code> command of docker. This was done to avoid the overhead of multiple layers created due to multiple RUN commands. However, the newer version of docker provides ability to create multi-stage docker builds.</p>
+
+<p>In multi-stage docker builds, you can seperate your commands into multiple stages, where each stage starts with a clean base image and copies only those files that it needs from the previous stage. You can have multiple <code>RUN</code> commands in a single stage, and not worry about all the unnecessary files that come with intermediate layers, as you will be throwing them away.</p>
+
+<p>The complete dockerfile is available on <a href="https://github.com/InfiniteCoder/gcc-docker">GitHub here</a>.</p>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2018-02-28-finding-popular-sites/"><i class="fa fa-chevron-circle-left"></i> Finding popular sites from data breach list</a>
+        </li>
+        
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2018-05-28-finding-domains/">Finding short, good domain names using AWS API ( Free of Cost ) <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - Aditya Patil | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://infinitecoder.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://infinitecoder.github.io/js/scripts.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>Aditya Patil&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="Aditya Patil" />
+  <meta name="generator" content="Hugo 0.46" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://infinitecoder.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://infinitecoder.github.io/">Aditya Patil&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+         
+        <li><a href="https://www.linkedin.com/in/aditya-patil"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+         
+        <li><a href="https://github.com/infinitecoder"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>CS, Linux and Programming</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Google researchers find that Machine Learning could be better for Indexing</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2017-12-12T00:00:00Z">Dec 12, 2017</time>
+        </li>
+        
+        
+
+        
+
+        <li>4 min read</li>
+    </ul>
+</aside>
+    
+
+    
+
+<h2 id="current-techniques">Current Techniques</h2>
+
+<p>Currently, we use techniques such as <a href="https://en.wikipedia.org/wiki/B-tree">B Tree index</a> to index data for fast searching. This is very important for various applications, mainly databases. Data warehouses can contain Petabytes or even Exabytes of data, and indexing them efficiently, both in terms of time and space, is very crucial.</p>
+
+<p>Similarly, we use Hashing techniques for pinpointing a data item in a dataset. A common application is storing a small amount of key-value pairs in a Hashmap. Most common languages provide some sort of inbuilt implementation for Hashmaps, such as <a href="https://docs.oracle.com/javase/9/docs/api/java/util/HashMap.html">HashMap in Java</a> or <a href="http://en.cppreference.com/w/cpp/container/map">Map in C++</a></p>
+
+<h2 id="how-they-work">How they work?</h2>
+
+<p>Indexing and Hashing techniques work on some presumption about the data. For example, one assumption might be that the data is sorted. Another assumption could be that data is equally distributed over some region.
+These techniques work well when the data follows the assumption, and work poorly or even fail when it doesn&rsquo;t. Thus, it is very important to properly decide what model the data follows. Is it sorted? Does it depict a bell curve? Are smaller strings more likely than larger strings? Answering these questions helps us choose, or develop the proper techniques to be used for indexing/hashing the data.</p>
+
+<h2 id="the-problems">The problems</h2>
+
+<p>However, traditional techniques come with their own drawbacks, mainly</p>
+
+<ul>
+<li>They are generally designed for specific cases, or worst case scenario of data.</li>
+<li>It can be very costly(both in terms of time and manpower involved) to develop custom models for indexing/hashing.</li>
+<li>It can be very difficult to analyze the huge amount of data to find out what pattern it follows.</li>
+<li>Technique developed for one scenario might never be used again, i.e lack of reusability.</li>
+</ul>
+
+<h2 id="the-solution">The solution</h2>
+
+<p>To overcome these problems, Google researchers have suggested that we can use Machine Learning to develop solutions for every case. Basically, we overcome the above problems as,</p>
+
+<ul>
+<li>The same ML program can be used to develop techniques for every case (after all, that is why we use ML)</li>
+<li>Cost effective as custom models don&rsquo;t need to be manually coded.</li>
+<li>ML is already well known to effectively analyze and model large datasets</li>
+<li>No worry about reusability, just create a new model using ML.</li>
+</ul>
+
+<p>In their own words, the researchers say,</p>
+
+<blockquote>
+<p>all of those indexes remain general purpose data structures, assuming the worst-case distribution of data and not taking advantage of more common patterns prevalent in real-world data. &hellip;. knowing the exact data distributions enables highly optimizing almost any index&hellip;
+Of course, in most real-world use cases, the data does not perfectly follow a known pattern and the engineering effort to build specialized solutions for every use case is usually too high. However, we argue that machine learning opens up the opportunity to learn a model that reflects the patterns and correlations in the data and thus enable the automatic synthesis of specialized index structures, termed learned indexes, with low engineering cost.</p>
+</blockquote>
+
+<h2 id="what-ml-based-solution-does">What ML-based solution does?</h2>
+
+<p>When we use ML for, say Classification or Regression, what we basically do is take the training data, fit that data to some model, say a curve. Later, when we use it, the model will <em>try to predict</em> the result for given input.
+Similarly, when we use ML for indexing, we first fit the data to some model, as shown in the image below<img src="https://infinitecoder.github.io/img/indexing-Google.png" alt="Indexing data, fitting to a model" />
+When we have to locate some data, we input the key, as usual. The difference is that the ML-based model would now try to predict where the data could be, and return that location.</p>
+
+<h2 id="results-of-the-research">Results of the research</h2>
+
+<p>The results have been very impressive. One of the datasets that Google used is the Map dataset.
+For the maps dataset Google indexed the longitude of ≈ 200M user-maintained features (e.g., roads, museums, coffee shops) across the world. The results for this dataset are shown in the table below.
+<img src="https://infinitecoder.github.io/img/mapDataset.png" alt="Map dataset results" />
+In their own words,</p>
+
+<blockquote>
+<p>The current design, even without any significant modifications, is already useful to replace index structures as used in data warehouses, which might be only updated once a day, or BigTable where B-Trees are created in bulk as part of the SStable merge process</p>
+</blockquote>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>ML, when powered by Large datasets and enough computing power, can do wonders. With powerful GPUs becoming commonplace, even in Mobiles, and with the advent of <a href="https://en.wikipedia.org/wiki/Tensor_processing_unit">Tensor Processing Units</a>, which are optimized for ML work, ML and AI are very likely to become part of our daily life, both as a Programmer, and as an end user.</p>
+
+<blockquote>
+<p><strong>You can read the paper at <a href="https://arxiv.org/pdf/1712.01208v1.pdf">Arxiv</a></strong></p>
+</blockquote>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2017-12-09-rtl8723be-fix/"><i class="fa fa-chevron-circle-left"></i> Fixing rtl8723be Wifi and Bluetooth issues in Linux</a>
+        </li>
+        
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2017-12-22-how-to-authorize-using-oauth-2-0-in-postman/">How to authorize using OAuth 2.0 in Postman <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - Aditya Patil | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://infinitecoder.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://infinitecoder.github.io/js/scripts.js"></script>
+</body>
+
+</html>

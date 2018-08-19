@@ -1,0 +1,203 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>Aditya Patil&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="Aditya Patil" />
+  <meta name="generator" content="Hugo 0.46" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://infinitecoder.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://infinitecoder.github.io/">Aditya Patil&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+         
+        <li><a href="https://www.linkedin.com/in/aditya-patil"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+         
+        <li><a href="https://github.com/infinitecoder"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>CS, Linux and Programming</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Fixing rtl8723be Wifi and Bluetooth issues in Linux</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2017-12-09T00:00:00Z">Dec 9, 2017</time>
+        </li>
+        
+        
+
+        
+
+        <li>4 min read</li>
+    </ul>
+</aside>
+    
+
+    
+
+<h2 id="the-problems">The problems</h2>
+
+<p><a href="http://www.realtek.com/products/productsView.aspx?Langid=1&amp;PFid=59&amp;Level=5&amp;Conn=4&amp;ProdID=374">rtl8723be</a> is an Wifi + Bluetooth card provided by Realtek. As goes with many devices, the support for this device in Linux has not been very good. On many devices, either or both of WiFi and Bluetooth don&rsquo;t work properly, or in the worst case, don&rsquo;t work at all.</p>
+
+<p>This post should help you fix the common issues that occur with this device.</p>
+
+<h2 id="why-the-problems-occur">Why the problems occur</h2>
+
+<p>The problems occur mainly due to the fact that while rtl8723be chip supports two antennas, many device manufacturers only put one antenna to save money. By default, the Linux drives for the device tries to use both the antennas(one of which does not exist) and ends up failing miserably.</p>
+
+<p>Also comes the problem of making Bluetooth and WiFi work together properly, something that&rsquo;s easier said than done.</p>
+
+<h2 id="fixing-wifi">Fixing WiFi</h2>
+
+<p>Enough background, let&rsquo;s get fixing stuff up. If the WiFi does not work or shows very poor signal for hotspots, this is for you.</p>
+
+<p>The driver for this device is maintained by <a href="https://github.com/lwfinger/rtlwifi_new">larry finger on github</a>. Luckily, this driver has been included in Linux kernel for some time, so you don&rsquo;t have to install it. All you have to do is set up the driver to use the proper antenna.</p>
+
+<p>To do this, first create an file <code>rtl8723be.conf</code> in <code>/etc/modprobe.d</code> directory. Add the following line to it,</p>
+
+<pre><code>options rtl8723be ant_sel=1
+</code></pre>
+
+<p>remove the driver by executing, the following command in the terminal,</p>
+
+<pre><code>sudo modprobe -r rtl8723be
+</code></pre>
+
+<p>mount the driver again by executing,</p>
+
+<pre><code>sudo modprobe rtl8723be
+</code></pre>
+
+<p>Check the wifi connection. It should be good now. If it ain&rsquo;t, try changing the ant_sel option to 2, repeat the process above to remove and mount the driver again, and check again. The problem should be fixed now.</p>
+
+<blockquote>
+<p><strong>Sometimes, driver/kernel update requires you to change ant_sel option between 1 and 2, even if it worked previously.</strong></p>
+</blockquote>
+
+<h2 id="fixing-bluetooth">Fixing Bluetooth</h2>
+
+<p>On most devices, Bluetooth does not work at all with rtl8723be. The issue is due to an inbuilt power management utility, called tlp. Well, not actually. The problem exists somewhere in the power management code for the driver itself, which causes interference with the normal working of tlp.</p>
+
+<p>To fix this, you have two options,</p>
+
+<ol>
+<li>remove tlp (not recommended)</li>
+<li>Block rtl8723be in tlp</li>
+</ol>
+
+<h3 id="how-to-block-the-device-in-tlp">How to block the device in tlp</h3>
+
+<p>To block the device, first, find the device id using <code>lsusb</code></p>
+
+<pre><code>lsusb
+</code></pre>
+
+<p>You&rsquo;ll see something like this,</p>
+
+<pre><code>Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 005: ID 0bda:57d6 Realtek Semiconductor Corp. 
+Bus 001 Device 004: ID 0bda:b006 Realtek Semiconductor Corp. 
+Bus 001 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
+Bus 001 Device 014: ID 05c6:f003 Qualcomm, Inc. 
+Bus 001 Device 002: ID 0461:4e54 Primax Electronics, Ltd 
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+</code></pre>
+
+<p>Let&rsquo;s say <code>0bda:57d6</code> is the id of realtek&rsquo;s card. To block it in tlp, open the file <code>/etc/default/tlp</code> and find the line that reads,</p>
+
+<pre><code>#USB_BLACKLIST=&quot;1111:2222 3333:4444&quot; 
+</code></pre>
+
+<p>change it to</p>
+
+<pre><code>USB_BLACKLIST=&quot;0bda:57d6&quot; 
+</code></pre>
+
+<p>Reboot your computer and test Bluetooth, it should work now.</p>
+
+<h3 id="bluetooth-works-but-only-for-very-short-distance">Bluetooth works, but only for very short distance</h3>
+
+<p>In case after blocking the device in tlp, Bluetooth works only for short distance, it&rsquo;s problem with <code>btcoexist</code>. btcoexist is responsible for making the Bluetooth and WiFi &ldquo;coexist&rdquo; peacefully, and it fails to do so. In this case, WiFi and Bluetooth require different antennas, and btcoexist fails to assign them properly.</p>
+
+<p>A temporary fix for this is to change ant_sel setting(again!). This way, you&rsquo;ll get Bluetooth to work very well, but WiFi won&rsquo;t work properly. When you need WiFi, change the settings again, so that you can use WiFi, but won&rsquo;t be able to use Bluetooth properly.</p>
+
+<h2 id="what-s-coming-in-the-future">What&rsquo;s coming in the future?</h2>
+
+<p>It is rumoured that updates to btcoexist may fix the issue in future. It is also possible that Realtek fixes the power management issues with the driver.</p>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2017-12-12-google-researchers-find-that-machine-learning-could-be-better-for-indexing/">Google researchers find that Machine Learning could be better for Indexing <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - Aditya Patil | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://infinitecoder.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://infinitecoder.github.io/js/scripts.js"></script>
+</body>
+
+</html>

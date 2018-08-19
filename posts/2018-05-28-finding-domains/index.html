@@ -1,0 +1,207 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>Aditya Patil&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="Aditya Patil" />
+  <meta name="generator" content="Hugo 0.46" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://infinitecoder.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://infinitecoder.github.io/">Aditya Patil&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+         
+        <li><a href="https://www.linkedin.com/in/aditya-patil"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+         
+        <li><a href="https://github.com/infinitecoder"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>CS, Linux and Programming</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Finding short, good domain names using AWS API ( Free of Cost )</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-05-28T00:00:00Z">May 28, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>4 min read</li>
+    </ul>
+</aside>
+    
+
+    
+
+<p>Recently, I was on a lookout for a domain name for personal use. This domain name will probably never be seen by more than 2 eyes, so I didn&rsquo;t care exactly what TLD it has, or even what it&rsquo;s FQDN is.</p>
+
+<p>That said, who doesn&rsquo;t like a short, memorable and meaningful domain name? foo.bar is always more favourable than say, verylongname.engineering (And yes, both are valid domain names). However, trying out each possible domain by typing it into some registrars search bar was too boring and time consuming. More often than not, you would come across unavailable domains. Hence I decided to automate the process by using some API.</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<h3 id="the-task">The Task</h3>
+
+<p>The task was to go through thousands of possible domain names, and list out those which are available, so I could choose one of them. Once that is done, I would select whichever I like most.</p>
+
+<h3 id="finding-an-api">Finding an API</h3>
+
+<p>There aren&rsquo;t many APIs out there to find if a domain is available or not, and the one&rsquo;s that are available, are way too costly for me to try out thousands of combinations. Eventually, I came across Amazon&rsquo;s Route 53 Domain API. This API provides endpoints for tasks such as registering, renewing, transfering domains. One of the operations is <a href="https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_CheckDomainAvailability.html">CheckDomainAvailability</a>. In their own words,</p>
+
+<blockquote>
+<p>This operation checks the availability of one domain name.</p>
+</blockquote>
+
+<p>Exactly what I wanted. As a bonus, I found out this API is free. Although the &ldquo;free&rdquo;dom did came at a cost, which I have mentioned below.</p>
+
+<h2 id="the-code">The Code</h2>
+
+<p>Amazon provides SDKs to use the API in various languages. As this project was going to be a one off script, I decided to go with Python. The boto3 package provides an easy to use abstraction for the API. It also comes with a quite good <a href="https://boto3.readthedocs.io/en/latest/reference/services/route53domains.html#Route53Domains.Client.check_domain_availability">documentation</a>.</p>
+
+<h3 id="requirements">Requirements</h3>
+
+<p>First, I needed to create an <a href="https://console.aws.amazon.com/iam">IAM user</a> in AWS. For this API, we need to enable the <a href="https://console.aws.amazon.com/iam/home?#/policies/arn%3Aaws%3Aiam%3A%3Aaws%3Apolicy%2FAmazonRoute53DomainsReadOnlyAccess">AmazonRoute53DomainsReadOnlyAccess</a> permission for the user.</p>
+
+<p>I used <a href="https://aws.amazon.com/cli/">AWS Command Line Interface(CLI)</a> to easily set up the credentials for the IAM user. Boto3 uses these details when making API calls. <code>awscli</code> and <code>boto3</code> can be installed using pip.</p>
+
+<pre><code>pip install awscli boto3
+</code></pre>
+
+<p>Next task was to configure aws cli. This is pretty straight forward, simply run,</p>
+
+<pre><code>aws cli configure
+</code></pre>
+
+<p>and enter access key, secret key, default region name and default output format.</p>
+
+<h3 id="script">Script</h3>
+
+<p>The script is quite simple. It reads words from the dict/cracklib file that is available on most Linux distros. Then it gets only those words whose length matches the requirement(say 3), and then checks the availability for all given tld&rsquo;s. If reply is &ldquo;AVAILABLE&rdquo;, it prints out the domain name.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> boto3
+<span style="color:#f92672">import</span> sys
+
+<span style="color:#75715e"># number of characters</span>
+size <span style="color:#f92672">=</span> int(sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>]) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+
+<span style="color:#75715e"># setup client</span>
+client <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#39;route53domains&#39;</span>)
+
+<span style="color:#75715e"># open dict file</span>
+words <span style="color:#f92672">=</span> open(<span style="color:#e6db74">&#34;/usr/share/dict/cracklib-small&#34;</span>, <span style="color:#e6db74">&#34;r&#34;</span>)
+<span style="color:#66d9ef">for</span> word <span style="color:#f92672">in</span> words:
+    <span style="color:#66d9ef">if</span> len(word) <span style="color:#f92672">==</span> size:
+        <span style="color:#66d9ef">for</span> domain <span style="color:#f92672">in</span> [word<span style="color:#f92672">.</span>strip() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.trade&#34;</span>, word<span style="color:#f92672">.</span>strip() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.loan&#34;</span>]:
+            <span style="color:#66d9ef">try</span>:
+                response <span style="color:#f92672">=</span> client<span style="color:#f92672">.</span>check_domain_availability(
+                    DomainName<span style="color:#f92672">=</span>domain,
+                )
+            <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> ex:
+                <span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;error occured for: &#34;</span> <span style="color:#f92672">+</span> domain)
+                <span style="color:#66d9ef">print</span>(ex)
+            <span style="color:#66d9ef">else</span>:
+                status <span style="color:#f92672">=</span> response[<span style="color:#e6db74">&#34;Availability&#34;</span>]
+                <span style="color:#66d9ef">if</span> status <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;AVAILABLE&#34;</span>:
+                    <span style="color:#66d9ef">print</span>(domain)</code></pre></div>
+<h2 id="issues">Issues</h2>
+
+<h3 id="rate-throttling">Rate Throttling</h3>
+
+<p>As mentioned earlier, the API is free to use. But this freedom comes at a cost. The API applies rate throttling. Frequently, I would see this error,</p>
+
+<pre><code>An error occurred (ThrottlingException) when calling the CheckDomainAvailability operation (reached max retries: 4): Rate exceeded
+</code></pre>
+
+<p>Initially, to speed up the script, I had created a multi threaded variant which used thread pools. However, that simply made the script hit rate throttling more often. Basically, rate throttling becomes a function of number of threads, with throttling being directly proportional to number of threads. So I decided to use the single threaded variant.</p>
+
+<p>Secondly, I needed to create a way to retry the failed calls. For this, I added the exception messages as in the above script. Then I would parse the output for this errors, and pass the domains to a slightly modified version of the script( which reads domains instead of words, from a given file).</p>
+
+<p>The commands for retrying are as such</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">python dna.py <span style="color:#ae81ff">4</span> | tee <span style="color:#ae81ff">4</span>-letter-dn														<span style="color:#75715e"># get list
+</span><span style="color:#75715e"></span>cat <span style="color:#ae81ff">4</span>-letter-dn | egrep <span style="color:#e6db74">&#34;^[a-z]{4}.(loan|trade)</span>$<span style="color:#e6db74">&#34;</span> &gt;&gt; available							<span style="color:#75715e"># gets available
+</span><span style="color:#75715e"></span>cat <span style="color:#ae81ff">4</span>-letter-dn | grep <span style="color:#e6db74">&#34;error occured&#34;</span>|sed <span style="color:#e6db74">&#34;s/error occured for: //g&#34;</span> |LC_COLLATE<span style="color:#f92672">=</span>C egrep <span style="color:#e6db74">&#34;[a-z]{4}.(loan|trade)&#34;</span> &gt; retry-these													  <span style="color:#75715e"># gets errored
+</span><span style="color:#75715e"></span>python dna-retry.py retry-these | tee <span style="color:#ae81ff">4</span>-letter-dn   									# retry errored</code></pre></div>
+<h3 id="lack-of-support-for-tlds">Lack of Support for TLDs</h3>
+
+<p>This API doesn&rsquo;t support many TLDs, some of which are quite nice, like <code>.site</code> or <code>.space</code>. Well, one can&rsquo;t complain too much about free stuff.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Using this script, I found some 3 letter and hundreds of 4 letter domains for <code>.loan</code> and <code>.trade</code> TLDs. Manually, this could have taken me longer than it would take Voyager 1 to reach interstellar space.</p>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2018-03-29-building-gcc-docker-image/"><i class="fa fa-chevron-circle-left"></i> Building GCC docker image</a>
+        </li>
+        
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - Aditya Patil | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://infinitecoder.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://infinitecoder.github.io/js/scripts.js"></script>
+</body>
+
+</html>

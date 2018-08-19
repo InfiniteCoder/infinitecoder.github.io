@@ -1,0 +1,214 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>Aditya Patil&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="Aditya Patil" />
+  <meta name="generator" content="Hugo 0.46" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://infinitecoder.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://infinitecoder.github.io/">Aditya Patil&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+         
+        <li><a href="https://www.linkedin.com/in/aditya-patil"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+         
+        <li><a href="https://github.com/infinitecoder"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>CS, Linux and Programming</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://infinitecoder.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>How to use Google OAuth 2.0 in Spring Boot 2.0</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2017-12-24T00:00:00Z">Dec 24, 2017</time>
+        </li>
+        
+        
+
+        
+
+        <li>2 min read</li>
+    </ul>
+</aside>
+    
+
+    
+
+<blockquote>
+<p><strong>While I have used Google here, the process is pretty much same for Facebook, Github and Okta.</strong></p>
+</blockquote>
+
+<p>Spring Boot 2.0 is coming soon, and the first Release Candidate is already out. With it, it brings about a lot of changes. Spring Boot now <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0.0-M1-Release-Notes#spring-framework-50">supports and requires Spring Framework 5.0</a>, which also has changed a lot.</p>
+
+<p>Now, it is much easier to set up Google as OAuth 2.0 client, with much less configuration required. This post shall explain how you can set up OAuth 2.0 client in Spring Boot 2.</p>
+
+<h2 id="getting-the-credentials">Getting the credentials</h2>
+
+<p>Head on to <a href="https://console.developers.google.com/">google developer console</a>, register new application( if you haven&rsquo;t already) and get the <strong>client id</strong> and <strong>client secret</strong>. On the consent page, make sure you set the redirection url to <code>http://localhost:8080/login/oauth2/code/google</code>. That is, the url is <code>{baseUrl}/login/oauth2/code/{registrationId}</code></p>
+
+<blockquote>
+<p><strong>Note that the default redirection URL is not <code>{baseUrl}/login</code>, as was the case with previous versions.</strong></p>
+</blockquote>
+
+<h2 id="setting-up-the-dependencies">Setting up the dependencies</h2>
+
+<p>Now create a new project, preferably using <a href="https://start.spring.io/">spring initializr</a>. Make sure you select spring boot 2.0. There are six dependencies you will need, beyond the obvious ones(like web-starter).
+For spring security, you need to add <strong><code>spring-security-config</code></strong>, <strong><code>spring-security-core</code></strong>, and <strong><code>spring-security-web</code></strong>, all of which are under <strong><code>org.springframework.security</code></strong> group.
+Also, for spring security oauth2, you need to add <strong><code>org.springframework.security</code></strong>, <strong><code>spring-security-oauth2-client</code></strong>, and <strong><code>spring-security-oauth2-jose</code></strong>, also user the same group.</p>
+
+<p>Your <code>pom.xml</code> dependency section should look something like this,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;dependencies&gt;</span>
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-web<span style="color:#f92672">&lt;/artifactId&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-test<span style="color:#f92672">&lt;/artifactId&gt;</span>
+            <span style="color:#f92672">&lt;scope&gt;</span>test<span style="color:#f92672">&lt;/scope&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+
+        <span style="color:#75715e">&lt;!-- spring security --&gt;</span>
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.security<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-security-config<span style="color:#f92672">&lt;/artifactId&gt;</span>
+            <span style="color:#f92672">&lt;version&gt;</span>5.0.0.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.security<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-security-core<span style="color:#f92672">&lt;/artifactId&gt;</span>
+            <span style="color:#f92672">&lt;version&gt;</span>RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.security<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-security-web<span style="color:#f92672">&lt;/artifactId&gt;</span>
+            <span style="color:#f92672">&lt;version&gt;</span>5.0.0.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+
+        <span style="color:#75715e">&lt;!-- Dependencies for OAuth 2.0--&gt;</span>
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.security<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-security-oauth2-core<span style="color:#f92672">&lt;/artifactId&gt;</span>
+            <span style="color:#f92672">&lt;version&gt;</span>5.0.0.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.security<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-security-oauth2-client<span style="color:#f92672">&lt;/artifactId&gt;</span>
+            <span style="color:#f92672">&lt;version&gt;</span>5.0.0.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+        <span style="color:#f92672">&lt;dependency&gt;</span>
+            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.security<span style="color:#f92672">&lt;/groupId&gt;</span>
+            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-security-oauth2-jose<span style="color:#f92672">&lt;/artifactId&gt;</span>
+            <span style="color:#f92672">&lt;version&gt;</span>5.0.0.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+        <span style="color:#f92672">&lt;/dependency&gt;</span>
+<span style="color:#f92672">&lt;/dependencies&gt;</span></code></pre></div>
+<h2 id="setting-up-the-configuration">Setting up the configuration</h2>
+
+<p>In your <code>application.yml</code> file, add this configuration</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${client-id}
+            client-secret: ${client-secret}</code></pre></div>
+<p>Either replace the <code>${client-id}</code> and <code>${client-secret}</code> with actual values (not recommended) or add those two as environment variables.</p>
+
+<blockquote>
+<p><strong>Note that we have set up registrationId as google. This lets spring security autoconfigure other details, which don&rsquo;t change often.</strong></p>
+</blockquote>
+
+<h2 id="that-s-it">That&rsquo;s it</h2>
+
+<p>We are done. Boot up the application, and launch <code>http://localhost:8080/</code>. You should get redirected to the login page, which should show a link that reads google. Click it, you should be redirected to google login page, and upon login, back to <code>index.html</code>.</p>
+
+<p>For a complete app, check out my <a href="https://github.com/InfiniteCoder/SpringBoot2OAuth2">repository on github</a>.</p>
+
+<blockquote>
+<p><strong>Read <a href="https://docs.spring.io/spring-security/site/docs/current/reference/html5/#jc-oauth2login">spring security reference</a> for more details.</strong></p>
+</blockquote>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2017-12-22-how-to-authorize-using-oauth-2-0-in-postman/"><i class="fa fa-chevron-circle-left"></i> How to authorize using OAuth 2.0 in Postman</a>
+        </li>
+        
+        
+        <li>
+            <a href="https://infinitecoder.github.io/posts/2018-02-28-finding-popular-sites/">Finding popular sites from data breach list <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - Aditya Patil | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://infinitecoder.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://infinitecoder.github.io/js/scripts.js"></script>
+</body>
+
+</html>
