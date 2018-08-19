@@ -22,6 +22,15 @@ Check out my projects on GitHub.</description>
     </item>
     
     <item>
+      <title>Recover Inaccessible DigitalOcean Droplet</title>
+      <link>https://infinitecoder.github.io/posts/recover-inaccessible-do-droplet/</link>
+      <pubDate>Sun, 19 Aug 2018 15:17:53 +0530</pubDate>
+      
+      <guid>https://infinitecoder.github.io/posts/recover-inaccessible-do-droplet/</guid>
+      <description>Messing up with server configuration is easier than one may think. While most issues can be solved by ssh-ing into the server and reversing whatever ill-fated commands that were executed, sometimes, the misconfiguration can leave you with a server you can&amp;rsquo;t access at all.</description>
+    </item>
+    
+    <item>
       <title>Finding short, good domain names using AWS API ( Free of Cost )</title>
       <link>https://infinitecoder.github.io/posts/2018-05-28-finding-domains/</link>
       <pubDate>Mon, 28 May 2018 00:00:00 +0000</pubDate>

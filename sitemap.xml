@@ -4,12 +4,17 @@
   
   <url>
     <loc>https://infinitecoder.github.io/posts/</loc>
-    <lastmod>2018-05-28T00:00:00+00:00</lastmod>
+    <lastmod>2018-08-19T15:17:53+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://infinitecoder.github.io/about/</loc>
     <lastmod>2018-08-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://infinitecoder.github.io/posts/recover-inaccessible-do-droplet/</loc>
+    <lastmod>2018-08-19T15:17:53+05:30</lastmod>
   </url>
   
   <url>
@@ -59,7 +64,26 @@
   </url>
   
   <url>
+    <loc>https://infinitecoder.github.io/tags/digitalocean/</loc>
+    <lastmod>2018-08-19T15:17:53+05:30</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://infinitecoder.github.io/tags/linux/</loc>
+    <lastmod>2018-08-19T15:17:53+05:30</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://infinitecoder.github.io/categories/linux/</loc>
+    <lastmod>2018-08-19T15:17:53+05:30</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://infinitecoder.github.io/tags/</loc>
+    <lastmod>2018-08-19T15:17:53+05:30</lastmod>
     <priority>0</priority>
   </url>
   
